@@ -44,7 +44,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         
         Favorite favorite = Favorite.builder()
                 .user(user)
-                .movie(movie)
+                .media(movie)
                 .createTime(LocalDateTime.now())
                 .build();
         

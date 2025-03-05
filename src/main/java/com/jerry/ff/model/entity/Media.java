@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @MappedSuperclass
 @Data
@@ -18,9 +19,28 @@ public abstract class Media {
 
     private String title;
     private String originalTitle;
-    
+
+    private Double rating;
+    private String region;
+    private String language;
     @Column(columnDefinition = "TEXT")
     private String description;
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "actors",
+//            joinColumns = @JoinColumn(name = "media_id"),
+//            inverseJoinColumns = @JoinColumn(name = "actor_id")
+//    )
+//    private List<Actor> actors;
+//
+//    @ManyToMany
+//    @JoinTable(
+//            name = "directors",
+//            joinColumns = @JoinColumn(name = "media_id"),
+//            inverseJoinColumns = @JoinColumn(name = "director_id")
+//    )
+//    private List<Director> directors;
     
     private String posterUrl;
     private String bannerUrl;
