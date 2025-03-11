@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "dramas")
 @Data
+@SuperBuilder
 @NoArgsConstructor
 public class Drama extends Media {
     private Integer status;
@@ -19,6 +21,6 @@ public class Drama extends Media {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL)
-    private List<Season<Drama>> seasons;
+    @OneToMany(mappedBy = "mediaId", cascade = CascadeType.ALL)
+    private List<Season> seasons;
 } 

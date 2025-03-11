@@ -3,7 +3,7 @@ package com.jerry.ff.service.impl;
 import com.jerry.ff.exception.BusinessException;
 import com.jerry.ff.exception.ResourceNotFoundException;
 import com.jerry.ff.model.dto.PlayHistoryDTO;
-import com.jerry.ff.model.entity.Movie;
+import com.jerry.ff.model.entity.Film;
 import com.jerry.ff.model.entity.PlayHistory;
 import com.jerry.ff.model.entity.User;
 import com.jerry.ff.model.vo.PlayHistoryVO;
@@ -36,7 +36,7 @@ public class PlayHistoryServiceImpl implements PlayHistoryService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         
-        Movie movie = movieRepository.findById(playHistoryDTO.getMovieId())
+        Film movie = movieRepository.findById(playHistoryDTO.getMovieId())
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + playHistoryDTO.getMovieId()));
         
         // 查找是否有该用户的该电影的播放记录，如果有则更新，没有则创建

@@ -17,24 +17,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Favorite<M extends Media> {
+public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer status = 1; // 1-有效, 0-无效
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "media_id", nullable = false)
-    private M media;
+    private Long mediaId;
+
+    private Integer mediaType;
 
     @CreatedDate
     private LocalDateTime createTime;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer status = 1; // 1-有效, 0-无效
 } 

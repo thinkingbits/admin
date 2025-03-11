@@ -18,7 +18,9 @@ public class SeasonVO implements Serializable {
     private Long id;
     private Long tvSeriesId;
     private String title;
+    private Long mediaId;
     private String description;
+    private String overview;
     private Integer seasonNumber;
     private Integer episodeCount;
     private LocalDate releaseDate;

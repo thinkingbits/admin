@@ -22,7 +22,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
-    private final CommentRepository commentRepository;
+//    private final CommentRepository commentRepository;
     private final OrderRepository orderRepository;
 
     @Override
@@ -39,8 +39,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         long totalMovies = movieRepository.count();
         
         // 查询总评论数和待审核评论数
-        long totalComments = commentRepository.count();
-        long pendingComments = commentRepository.countByStatus(0);
+//        long totalComments = commentRepository.count();
+//        long pendingComments = commentRepository.countByStatus(0);
         
         // 查询总订单数、今日新增订单数、待支付订单数
         long totalOrders = orderRepository.count();
@@ -54,10 +54,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         return DashboardVO.builder()
                 .totalUsers(totalUsers)
                 .totalMovies(totalMovies)
-                .totalComments(totalComments)
+//                .totalComments(totalComments)
                 .totalOrders(totalOrders)
                 .pendingOrders(pendingOrders)
-                .pendingComments(pendingComments)
+//                .pendingComments(pendingComments)
                 .totalRevenue(totalRevenue != null ? totalRevenue : BigDecimal.ZERO)
                 .todayNewUsers(todayNewUsers)
                 .todayNewOrders(todayNewOrders)

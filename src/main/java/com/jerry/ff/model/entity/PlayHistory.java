@@ -30,7 +30,7 @@ public class PlayHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
-    private Movie movie;
+    private Film movie;
 
     @Column(name = "play_position")
     private Integer playPosition = 0;  // 播放位置（秒）

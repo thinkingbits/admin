@@ -1,10 +1,7 @@
 package com.jerry.ff.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -18,6 +15,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Anime extends Media {
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer status = 1; // 0-下架, 1-上架
+
     private String studio;  // 制作公司
     private String season;  // 播出季度，如：2024年春季
     private String broadcast;  // 播出时间，如：每周日 23:00
@@ -26,8 +27,8 @@ public class Anime extends Media {
     @JoinColumn(name = "category_id")
     private Category category;
     
-    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL)
-    private List<Season<Anime>> seasons;
+    @OneToMany(mappedBy = "mediaId", cascade = CascadeType.ALL)
+    private List<Season> seasons;
 
     @Enumerated(EnumType.STRING)
     private AnimeType type;  // TV, MOVIE, OVA, ONA

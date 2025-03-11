@@ -10,19 +10,26 @@ import java.time.LocalDate;
 @Table(name = "episodes")
 @Data
 @NoArgsConstructor
-public class Episode<T extends Media> {
+public class Episode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "season_id")
-    private Season<T> season;
+    private Season season;
 
     private Integer episodeNumber;
+
     private String title;
+
     private String overview;
+
     private String stillUrl;
+
     private Integer duration;
+
+    private Integer viewCount;
+
     private LocalDate airDate;
 } 

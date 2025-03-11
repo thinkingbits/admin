@@ -20,8 +20,10 @@ public class EpisodeVO implements Serializable {
     private Integer episodeNumber;
     private Integer duration;
     private String videoUrl;
+    private String overview;
     private String thumbnailUrl;
     private String description;
+    private String stillUrl;
     private LocalDate airDate;
     private Long viewCount;
     private Integer status;

@@ -1,7 +1,7 @@
 package com.jerry.ff.controller;
 
-import com.jerry.ff.model.vo.MovieVO;
-import com.jerry.ff.service.MovieService;
+import com.jerry.ff.model.vo.FilmVO;
+import com.jerry.ff.service.FilmService;
 import com.jerry.ff.util.ResponseResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "搜索管理", description = "搜索相关接口")
 public class SearchController {
 
-    private final MovieService movieService;
+    private final FilmService movieService;
 
     @GetMapping("/movies")
     @Operation(summary = "搜索电影", description = "根据关键字搜索电影")
-    public ResponseResult<Page<MovieVO>> searchMovies(
+    public ResponseResult<Page<FilmVO>> searchMovies(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

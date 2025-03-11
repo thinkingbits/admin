@@ -14,11 +14,4 @@ import java.util.List;
 public interface DirectorRepository extends JpaRepository<Director, Long> {
 
     Page<Director> findByNameContaining(String name, Pageable pageable);
-
-    @Query(value = "SELECT d.* FROM directors d " +
-            "JOIN movie_directors md ON d.id = md.director_id " +
-            "GROUP BY d.id " +
-            "ORDER BY COUNT(md.movie_id) DESC " +
-            "LIMIT :limit", nativeQuery = true)
-    List<Director> findPopularDirectors(@Param("limit") int limit);
 } 

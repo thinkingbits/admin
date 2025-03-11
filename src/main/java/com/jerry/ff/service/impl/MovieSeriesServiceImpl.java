@@ -2,12 +2,12 @@ package com.jerry.ff.service.impl;
 
 import com.jerry.ff.exception.ResourceNotFoundException;
 import com.jerry.ff.model.entity.Category;
-import com.jerry.ff.model.entity.Movie;
+import com.jerry.ff.model.entity.Film;
 import com.jerry.ff.model.entity.MovieSeries;
-import com.jerry.ff.model.vo.MovieSeriesVO;
+import com.jerry.ff.model.vo.FilmSeriesVO;
 import com.jerry.ff.repository.MovieRepository;
-import com.jerry.ff.repository.MovieSeriesRepository;
-import com.jerry.ff.service.MovieSeriesService;
+import com.jerry.ff.repository.FilmSeriesRepository;
+import com.jerry.ff.service.FilmSeriesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,20 +21,20 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MovieSeriesServiceImpl implements MovieSeriesService {
+public class MovieSeriesServiceImpl implements FilmSeriesService {
 
-    private final MovieSeriesRepository movieSeriesRepository;
+    private final FilmSeriesRepository movieSeriesRepository;
     private final MovieRepository movieRepository;
 
     @Override
-    public MovieSeriesVO getMovieSeries(Long id) {
+    public FilmSeriesVO getMovieSeries(Long id) {
         MovieSeries movieSeries = movieSeriesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("电影系列不存在，ID: " + id));
         return convertToMovieSeriesVO(movieSeries);
     }
 
     @Override
-    public Page<MovieSeriesVO> getMovieSeriesList(Long categoryId, Pageable pageable) {
+    public Page<FilmSeriesVO> getMovieSeriesList(Long categoryId, Pageable pageable) {
         Page<MovieSeries> movieSeriesPage;
         if (categoryId != null) {
             movieSeriesPage = movieSeriesRepository.findByCategoryId(categoryId, pageable);
@@ -45,12 +45,12 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
     }
 
     @Override
-    public Page<MovieSeriesVO> getActiveMovieSeries(Pageable pageable) {
+    public Page<FilmSeriesVO> getActiveMovieSeries(Pageable pageable) {
         return convertToMovieSeriesVOPage(movieSeriesRepository.findByStatus(1, pageable));
     }
 
     @Override
-    public List<MovieSeriesVO> getLatestMovieSeries(int limit) {
+    public List<FilmSeriesVO> getLatestMovieSeries(int limit) {
         return movieSeriesRepository.findLatestMovieSeries(Pageable.ofSize(limit))
                 .stream()
                 .map(this::convertToMovieSeriesVO)
@@ -58,7 +58,7 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
     }
 
     @Override
-    public List<MovieSeriesVO> getTopRatedMovieSeries(int limit) {
+    public List<FilmSeriesVO> getTopRatedMovieSeries(int limit) {
         return movieSeriesRepository.findByStatusOrderByRatingDesc(1, Pageable.ofSize(limit))
                 .stream()
                 .map(this::convertToMovieSeriesVO)
@@ -66,14 +66,14 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
     }
 
     @Override
-    public Page<MovieSeriesVO> searchMovieSeries(String keyword, Pageable pageable) {
+    public Page<FilmSeriesVO> searchMovieSeries(String keyword, Pageable pageable) {
         return convertToMovieSeriesVOPage(
                 movieSeriesRepository.findByTitleContainingAndStatus(keyword, 1, pageable));
     }
 
     @Override
     @Transactional
-    public MovieSeriesVO createMovieSeries(MovieSeriesVO movieSeriesVO) {
+    public FilmSeriesVO createMovieSeries(FilmSeriesVO movieSeriesVO) {
         MovieSeries movieSeries = MovieSeries.builder()
                 .title(movieSeriesVO.getTitle())
                 .originalTitle(movieSeriesVO.getOriginalTitle())
@@ -97,7 +97,7 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
 
     @Override
     @Transactional
-    public MovieSeriesVO updateMovieSeries(Long id, MovieSeriesVO movieSeriesVO) {
+    public FilmSeriesVO updateMovieSeries(Long id, FilmSeriesVO movieSeriesVO) {
         MovieSeries movieSeries = movieSeriesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("电影系列不存在，ID: " + id));
 
@@ -134,10 +134,10 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
         MovieSeries movieSeries = movieSeriesRepository.findById(seriesId)
                 .orElseThrow(() -> new ResourceNotFoundException("电影系列不存在，ID: " + seriesId));
         
-        Movie movie = movieRepository.findById(movieId)
+        Film movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + movieId));
 
-        movie.setMovieSeries(movieSeries);
+//        movie.setMovieSeries(movieSeries);
         movie.setSeriesOrder(seriesOrder);
         movieRepository.save(movie);
 
@@ -149,14 +149,14 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
     @Override
     @Transactional
     public void removeMovieFromSeries(Long seriesId, Long movieId) {
-        Movie movie = movieRepository.findById(movieId)
+        Film movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + movieId));
 
-        if (!seriesId.equals(movie.getMovieSeries().getId())) {
-            throw new IllegalArgumentException("该电影不属于指定的系列");
-        }
+//        if (!seriesId.equals(movie.getMovieSeries().getId())) {
+//            throw new IllegalArgumentException("该电影不属于指定的系列");
+//        }
 
-        movie.setMovieSeries(null);
+//        movie.setMovieSeries(null);
         movie.setSeriesOrder(null);
         movieRepository.save(movie);
 
@@ -170,19 +170,19 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
     @Override
     @Transactional
     public void updateMovieSeriesOrder(Long seriesId, Long movieId, Integer newOrder) {
-        Movie movie = movieRepository.findById(movieId)
+        Film movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + movieId));
 
-        if (!seriesId.equals(movie.getMovieSeries().getId())) {
-            throw new IllegalArgumentException("该电影不属于指定的系列");
-        }
+//        if (!seriesId.equals(movie.getMovieSeries().getId())) {
+//            throw new IllegalArgumentException("该电影不属于指定的系列");
+//        }
 
         movie.setSeriesOrder(newOrder);
         movieRepository.save(movie);
     }
 
-    private MovieSeriesVO convertToMovieSeriesVO(MovieSeries movieSeries) {
-        return MovieSeriesVO.builder()
+    private FilmSeriesVO convertToMovieSeriesVO(MovieSeries movieSeries) {
+        return FilmSeriesVO.builder()
                 .id(movieSeries.getId())
                 .title(movieSeries.getTitle())
                 .originalTitle(movieSeries.getOriginalTitle())
@@ -203,8 +203,8 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
                 .updateTime(movieSeries.getUpdateTime())
                 .movies(movieSeries.getMovies() != null ?
                         movieSeries.getMovies().stream()
-                                .sorted(Comparator.comparing(Movie::getSeriesOrder))
-                                .map(movie -> MovieSeriesVO.MovieInSeriesVO.builder()
+                                .sorted(Comparator.comparing(Film::getSeriesOrder))
+                                .map(movie -> FilmSeriesVO.MovieInSeriesVO.builder()
                                         .id(movie.getId())
                                         .title(movie.getTitle())
                                         .description(movie.getDescription())
@@ -218,8 +218,8 @@ public class MovieSeriesServiceImpl implements MovieSeriesService {
                 .build();
     }
 
-    private Page<MovieSeriesVO> convertToMovieSeriesVOPage(Page<MovieSeries> movieSeriesPage) {
-        List<MovieSeriesVO> movieSeriesVOs = movieSeriesPage.getContent().stream()
+    private Page<FilmSeriesVO> convertToMovieSeriesVOPage(Page<MovieSeries> movieSeriesPage) {
+        List<FilmSeriesVO> movieSeriesVOs = movieSeriesPage.getContent().stream()
                 .map(this::convertToMovieSeriesVO)
                 .collect(Collectors.toList());
 

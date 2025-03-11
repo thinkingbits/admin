@@ -49,7 +49,7 @@ public class MovieSeries {
     private String language;
     
     @OneToMany(mappedBy = "movieSeries", cascade = CascadeType.ALL)
-    private List<Movie> movies;
+    private List<Film> movies;
     
     @Column(nullable = false)
     @Builder.Default

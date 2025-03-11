@@ -80,9 +80,9 @@ public class DramaServiceImpl implements DramaService {
 
     @Override
     public SeasonVO getSeason(Long dramaId, Integer seasonNumber) {
-        Season season = seasonRepository.findByDramaIdAndSeasonNumber(dramaId, seasonNumber)
-                .orElseThrow(() -> new BusinessException("季不存在"));
-        return convertToSeasonVO(season);
+//        Season season = seasonRepository.findByDramaIdAndSeasonNumber(dramaId, seasonNumber)
+//                .orElseThrow(() -> new BusinessException("季不存在"));
+        return convertToSeasonVO(new Season());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class DramaServiceImpl implements DramaService {
                 
         watchHistory.setUserId(userId);
         watchHistory.setEpisodeId(episodeId);
-        watchHistory.setDramaId(episode.getSeason().getDrama().getId());
+        watchHistory.setDramaId(episode.getSeason().getMediaId());
         watchHistory.setProgress(progress);
         
         userWatchHistoryRepository.save(watchHistory);
@@ -156,20 +156,6 @@ public class DramaServiceImpl implements DramaService {
     }
 
     private DramaVO convertToDramaVO(Drama drama) {
-        List<DramaVO.ActorVO> actorVOs = new ArrayList<>();
-        if (drama.getActors() != null) {
-            actorVOs = drama.getActors().stream()
-                    .map(actor -> DramaVO.ActorVO.builder()
-                            .id(actor.getId())
-                            .name(actor.getName())
-                            .originalName(actor.getOriginalName())
-                            .avatarUrl(actor.getAvatarUrl())
-                            .roleName(actor.getRoleName())
-                            .roleType(actor.getRoleType())
-                            .build())
-                    .collect(Collectors.toList());
-        }
-
         List<SeasonVO> seasonVOs = new ArrayList<>();
         if (drama.getSeasons() != null) {
             seasonVOs = drama.getSeasons().stream()
@@ -186,19 +172,12 @@ public class DramaServiceImpl implements DramaService {
                 .bannerUrl(drama.getBannerUrl())
                 .releaseDate(drama.getReleaseDate())
                 .endDate(drama.getEndDate())
-                .totalEpisodes(drama.getTotalEpisodes())
-                .currentEpisodes(drama.getCurrentEpisodes())
-                .rating(drama.getRating())
-                .ratingCount(drama.getRatingCount())
-                .categoryId(drama.getCategoryId())
-                .categoryName(drama.getCategoryName())
                 .region(drama.getRegion())
                 .language(drama.getLanguage())
                 .status(drama.getStatus())
                 .createTime(drama.getCreateTime())
                 .updateTime(drama.getUpdateTime())
                 .seasons(seasonVOs)
-                .actors(actorVOs)
                 .build();
     }
 
@@ -212,7 +191,7 @@ public class DramaServiceImpl implements DramaService {
 
         return SeasonVO.builder()
                 .id(season.getId())
-                .dramaId(season.getDrama().getId())
+                .mediaId(season.getMediaId())
                 .seasonNumber(season.getSeasonNumber())
                 .title(season.getTitle())
                 .overview(season.getOverview())

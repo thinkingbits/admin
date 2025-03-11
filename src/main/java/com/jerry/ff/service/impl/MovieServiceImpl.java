@@ -2,15 +2,15 @@ package com.jerry.ff.service.impl;
 
 import com.jerry.ff.exception.BusinessException;
 import com.jerry.ff.exception.ResourceNotFoundException;
-import com.jerry.ff.model.dto.MovieDTO;
+import com.jerry.ff.model.dto.FilmDTO;
 import com.jerry.ff.model.entity.Category;
 import com.jerry.ff.model.entity.Director;
-import com.jerry.ff.model.entity.Movie;
-import com.jerry.ff.model.vo.MovieVO;
+import com.jerry.ff.model.entity.Film;
+import com.jerry.ff.model.vo.FilmVO;
 import com.jerry.ff.repository.CategoryRepository;
 import com.jerry.ff.repository.DirectorRepository;
 import com.jerry.ff.repository.MovieRepository;
-import com.jerry.ff.service.MovieService;
+import com.jerry.ff.service.FilmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MovieServiceImpl implements MovieService {
+public class MovieServiceImpl implements FilmService {
 
     private final MovieRepository movieRepository;
     private final CategoryRepository categoryRepository;
@@ -39,8 +39,8 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Cacheable(value = "movies", key = "'category_' + #categoryId + '_page_' + #pageable.pageNumber")
-    public Page<MovieVO> getMovies(Long categoryId, Pageable pageable) {
-        Page<Movie> moviePage;
+    public Page<FilmVO> getMovies(Long categoryId, Pageable pageable) {
+        Page<Film> moviePage;
         
         if (categoryId != null) {
             moviePage = movieRepository.findByCategoryIdAndStatus(categoryId, 1, pageable);
@@ -53,8 +53,8 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Cacheable(value = "movies", key = "'movie_' + #id")
-    public MovieVO getMovie(Long id) {
-        Movie movie = movieRepository.findById(id)
+    public FilmVO getMovie(Long id) {
+        Film movie = movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
         
         if (movie.getStatus() != 1) {
@@ -67,7 +67,7 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional
     @CacheEvict(value = "movies", allEntries = true)
-    public MovieVO createMovie(MovieDTO movieDTO) {
+    public FilmVO createMovie(FilmDTO movieDTO) {
         Category category = categoryRepository.findById(movieDTO.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("分类不存在，ID: " + movieDTO.getCategoryId()));
         
@@ -78,8 +78,8 @@ public class MovieServiceImpl implements MovieService {
                             .orElseThrow(() -> new ResourceNotFoundException("导演不存在，ID: " + directorId)))
                     .collect(Collectors.toSet());
         }
-        
-        Movie movie = Movie.builder()
+
+        Film movie = Film.builder()
                 .title(movieDTO.getTitle())
                 .description(movieDTO.getDescription())
                 .releaseDate(movieDTO.getReleaseDate())
@@ -88,20 +88,19 @@ public class MovieServiceImpl implements MovieService {
                 .videoUrl(movieDTO.getVideoUrl())
                 .rating(0.0)
                 .category(category)
-                .directors(directors)
                 .status(1)
                 .createTime(LocalDateTime.now())
                 .build();
         
-        Movie savedMovie = movieRepository.save(movie);
+        Film savedMovie = movieRepository.save(movie);
         return convertToMovieVO(savedMovie);
     }
 
     @Override
     @Transactional
     @CacheEvict(value = "movies", allEntries = true)
-    public MovieVO updateMovie(Long id, MovieDTO movieDTO) {
-        Movie movie = movieRepository.findById(id)
+    public FilmVO updateMovie(Long id, FilmDTO movieDTO) {
+        Film movie = movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
         
         Category category = categoryRepository.findById(movieDTO.getCategoryId())
@@ -122,10 +121,9 @@ public class MovieServiceImpl implements MovieService {
         movie.setPosterUrl(movieDTO.getPosterUrl());
         movie.setVideoUrl(movieDTO.getVideoUrl());
         movie.setCategory(category);
-        movie.setDirectors(directors);
         movie.setUpdateTime(LocalDateTime.now());
         
-        Movie updatedMovie = movieRepository.save(movie);
+        Film updatedMovie = movieRepository.save(movie);
         return convertToMovieVO(updatedMovie);
     }
 
@@ -143,24 +141,24 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional
     @CacheEvict(value = "movies", allEntries = true)
-    public MovieVO updateMovieStatus(Long id, Integer status) {
+    public FilmVO updateMovieStatus(Long id, Integer status) {
         if (status != 0 && status != 1) {
             throw new BusinessException(400, "电影状态值无效，应为0(下架)或1(上架)");
         }
         
-        Movie movie = movieRepository.findById(id)
+        Film movie = movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
         
         movie.setStatus(status);
         movie.setUpdateTime(LocalDateTime.now());
-        Movie updatedMovie = movieRepository.save(movie);
+        Film updatedMovie = movieRepository.save(movie);
         
         return convertToMovieVO(updatedMovie);
     }
 
     @Override
     @Cacheable(value = "movies", key = "'featured_' + #limit")
-    public List<MovieVO> getFeaturedMovies(int limit) {
+    public List<FilmVO> getFeaturedMovies(int limit) {
         // 这里可以根据具体逻辑获取推荐电影，这里简单返回最新上架的几部电影
         return movieRepository.findByStatusOrderByCreateTimeDesc(1, Pageable.ofSize(limit))
                 .stream()
@@ -170,7 +168,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Cacheable(value = "movies", key = "'latest_' + #limit")
-    public List<MovieVO> getLatestMovies(int limit) {
+    public List<FilmVO> getLatestMovies(int limit) {
         return movieRepository.findByStatusOrderByReleaseDateDesc(1, Pageable.ofSize(limit))
                 .stream()
                 .map(this::convertToMovieVO)
@@ -179,7 +177,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     @Cacheable(value = "movies", key = "'popular_' + #limit")
-    public List<MovieVO> getPopularMovies(int limit) {
+    public List<FilmVO> getPopularMovies(int limit) {
         return movieRepository.findByStatusOrderByRatingDesc(1, Pageable.ofSize(limit))
                 .stream()
                 .map(this::convertToMovieVO)
@@ -187,46 +185,39 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Page<MovieVO> searchMovies(String keyword, Pageable pageable) {
-        Page<Movie> moviePage = movieRepository.findByTitleContainingAndStatus(keyword, 1, pageable);
+    public Page<FilmVO> searchMovies(String keyword, Pageable pageable) {
+        Page<Film> moviePage = movieRepository.findByTitleContainingAndStatus(keyword, 1, pageable);
         return convertToMovieVOPage(moviePage);
     }
 
     @Override
-    public Page<MovieVO> getAllMovies(Pageable pageable) {
-        Page<Movie> moviePage = movieRepository.findAll(pageable);
+    public Page<FilmVO> getAllMovies(Pageable pageable) {
+        Page<Film> moviePage = movieRepository.findAll(pageable);
         return convertToMovieVOPage(moviePage);
     }
 
     @Override
-    public Page<MovieVO> getMoviesByCategory(Long categoryId, Pageable pageable) {
-        Page<Movie> moviePage = movieRepository.findByCategoryId(categoryId, pageable);
+    public Page<FilmVO> getMoviesByCategory(Long categoryId, Pageable pageable) {
+        Page<Film> moviePage = movieRepository.findByCategoryId(categoryId, pageable);
         return convertToMovieVOPage(moviePage);
     }
 
     @Override
-    public Page<MovieVO> getActiveMovies(Pageable pageable) {
-        Page<Movie> moviePage = movieRepository.findByStatus(1, pageable);
+    public Page<FilmVO> getActiveMovies(Pageable pageable) {
+        Page<Film> moviePage = movieRepository.findByStatus(1, pageable);
         return convertToMovieVOPage(moviePage);
     }
 
     @Override
-    public List<MovieVO> getTopRatedMovies(int limit) {
+    public List<FilmVO> getTopRatedMovies(int limit) {
         return movieRepository.findByStatusOrderByRatingDesc(1, Pageable.ofSize(limit))
                 .stream()
                 .map(this::convertToMovieVO)
                 .collect(Collectors.toList());
     }
     
-    private MovieVO convertToMovieVO(Movie movie) {
-        List<MovieVO.DirectorVO> directorVOs = movie.getDirectors().stream()
-                .map(director -> MovieVO.DirectorVO.builder()
-                        .id(director.getId())
-                        .name(director.getName())
-                        .build())
-                .collect(Collectors.toList());
-        
-        return MovieVO.builder()
+    private FilmVO convertToMovieVO(Film movie) {
+        return FilmVO.builder()
                 .id(movie.getId())
                 .title(movie.getTitle())
                 .description(movie.getDescription())
@@ -240,12 +231,11 @@ public class MovieServiceImpl implements MovieService {
                 .status(movie.getStatus())
                 .createTime(movie.getCreateTime())
                 .updateTime(movie.getUpdateTime())
-                .directors(directorVOs)
                 .build();
     }
     
-    private Page<MovieVO> convertToMovieVOPage(Page<Movie> moviePage) {
-        List<MovieVO> movieVOs = moviePage.getContent().stream()
+    private Page<FilmVO> convertToMovieVOPage(Page<Film> moviePage) {
+        List<FilmVO> movieVOs = moviePage.getContent().stream()
                 .map(this::convertToMovieVO)
                 .collect(Collectors.toList());
         

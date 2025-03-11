@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "seasons")
 @Data
 @NoArgsConstructor
-public class Season<T extends Media> {
+public class Season {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,10 +27,10 @@ public class Season<T extends Media> {
 
     private String posterUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "media_id")
-    private T media;
+    private Long mediaId;
+
+    private Long mediaType;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
-    private List<Episode<T>> episodes;
+    private List<Episode> episodes;
 } 

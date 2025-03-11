@@ -1,7 +1,7 @@
 package com.jerry.ff.controller;
 
-import com.jerry.ff.model.vo.MovieSeriesVO;
-import com.jerry.ff.service.MovieSeriesService;
+import com.jerry.ff.model.vo.FilmSeriesVO;
+import com.jerry.ff.service.FilmSeriesService;
 import com.jerry.ff.util.ResponseResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,17 +22,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieSeriesController {
 
-    private final MovieSeriesService movieSeriesService;
+    private final FilmSeriesService movieSeriesService;
 
     @GetMapping("/{id}")
     @Operation(summary = "获取电影系列详情")
-    public ResponseResult<MovieSeriesVO> getMovieSeries(@PathVariable Long id) {
+    public ResponseResult<FilmSeriesVO> getMovieSeries(@PathVariable Long id) {
         return ResponseResult.success(movieSeriesService.getMovieSeries(id));
     }
 
     @GetMapping
     @Operation(summary = "获取电影系列列表")
-    public ResponseResult<Page<MovieSeriesVO>> getMovieSeriesList(
+    public ResponseResult<Page<FilmSeriesVO>> getMovieSeriesList(
             @Parameter(description = "分类ID") @RequestParam(required = false) Long categoryId,
             @Parameter(description = "页码") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "每页数量") @RequestParam(defaultValue = "10") int size,
@@ -46,21 +46,21 @@ public class MovieSeriesController {
 
     @GetMapping("/latest")
     @Operation(summary = "获取最新电影系列")
-    public ResponseResult<List<MovieSeriesVO>> getLatestMovieSeries(
+    public ResponseResult<List<FilmSeriesVO>> getLatestMovieSeries(
             @Parameter(description = "获取数量") @RequestParam(defaultValue = "10") int limit) {
         return ResponseResult.success(movieSeriesService.getLatestMovieSeries(limit));
     }
 
     @GetMapping("/top-rated")
     @Operation(summary = "获取评分最高的电影系列")
-    public ResponseResult<List<MovieSeriesVO>> getTopRatedMovieSeries(
+    public ResponseResult<List<FilmSeriesVO>> getTopRatedMovieSeries(
             @Parameter(description = "获取数量") @RequestParam(defaultValue = "10") int limit) {
         return ResponseResult.success(movieSeriesService.getTopRatedMovieSeries(limit));
     }
 
     @GetMapping("/search")
     @Operation(summary = "搜索电影系列")
-    public ResponseResult<Page<MovieSeriesVO>> searchMovieSeries(
+    public ResponseResult<Page<FilmSeriesVO>> searchMovieSeries(
             @Parameter(description = "关键词") @RequestParam String keyword,
             @Parameter(description = "页码") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "每页数量") @RequestParam(defaultValue = "10") int size) {
@@ -72,16 +72,16 @@ public class MovieSeriesController {
     @PostMapping
     @Operation(summary = "创建电影系列")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseResult<MovieSeriesVO> createMovieSeries(@RequestBody MovieSeriesVO movieSeriesVO) {
+    public ResponseResult<FilmSeriesVO> createMovieSeries(@RequestBody FilmSeriesVO movieSeriesVO) {
         return ResponseResult.success(movieSeriesService.createMovieSeries(movieSeriesVO));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "更新电影系列")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseResult<MovieSeriesVO> updateMovieSeries(
+    public ResponseResult<FilmSeriesVO> updateMovieSeries(
             @PathVariable Long id,
-            @RequestBody MovieSeriesVO movieSeriesVO) {
+            @RequestBody FilmSeriesVO movieSeriesVO) {
         return ResponseResult.success(movieSeriesService.updateMovieSeries(id, movieSeriesVO));
     }
 

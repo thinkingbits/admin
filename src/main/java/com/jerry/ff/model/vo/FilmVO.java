@@ -14,34 +14,29 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DramaVO implements Serializable {
+public class FilmVO implements Serializable {
+
     private Long id;
     private String title;
-    private String originalTitle;
     private String description;
-    private String posterUrl;
-    private String bannerUrl;
     private LocalDate releaseDate;
-    private LocalDate endDate;
+    private Integer duration;
+    private String posterUrl;
+    private String videoUrl;
+    private Double rating;
     private Long categoryId;
     private String categoryName;
-    private String region;
-    private String language;
     private Integer status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private List<SeasonVO> seasons;
+    private List<DirectorVO> directors;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ActorVO implements Serializable {
+    public static class DirectorVO implements Serializable {
         private Long id;
         private String name;
-        private String originalName;
-        private String avatarUrl;
-        private String roleName;
-        private Integer roleType;
     }
 } 

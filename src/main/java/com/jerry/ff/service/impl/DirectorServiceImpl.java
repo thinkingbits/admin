@@ -86,22 +86,12 @@ public class DirectorServiceImpl implements DirectorService {
             throw new ResourceNotFoundException("导演不存在，ID: " + id);
         }
         
-        // 检查是否有电影关联了该导演
-        if (movieRepository.existsByDirectorsId(id)) {
-            throw new RuntimeException("无法删除导演，有电影与其关联");
-        }
-        
         directorRepository.deleteById(id);
     }
 
     @Override
-    @Cacheable(value = "directors", key = "'popular_' + #limit")
     public List<DirectorVO> getPopularDirectors(int limit) {
-        // 这里可以根据电影数量或者评分来确定热门导演
-        List<Director> directors = directorRepository.findPopularDirectors(limit);
-        return directors.stream()
-                .map(this::convertToDirectorVO)
-                .collect(Collectors.toList());
+        return List.of();
     }
     
     private DirectorVO convertToDirectorVO(Director director) {
