@@ -9,31 +9,31 @@ import java.util.List;
 
 public interface FilmService {
 
-    FilmVO createMovie(FilmDTO movieDTO);
+    FilmVO createFilm(FilmDTO filmDTO);
 
-    FilmVO updateMovie(Long id, FilmDTO movieDTO);
+    FilmVO updateFilm(Long id, FilmDTO filmDTO);
 
-    void deleteMovie(Long id);
+    void deleteFilm(Long id);
 
-    FilmVO getMovie(Long id);
+    FilmVO getFilm(Long id);
 
-    Page<FilmVO> getAllMovies(Pageable pageable);
+    Page<FilmVO> getAllFilms(Pageable pageable);
 
-    Page<FilmVO> getMoviesByCategory(Long categoryId, Pageable pageable);
+    Page<FilmVO> getFilmsByCategory(Long categoryId, Pageable pageable);
 
-    Page<FilmVO> getActiveMovies(Pageable pageable);
+    Page<FilmVO> getActiveFilms(Pageable pageable);
 
-    List<FilmVO> getTopRatedMovies(int limit);
+    List<FilmVO> getTopRatedFilms(int limit);
 
-    List<FilmVO> getLatestMovies(int limit);
+    List<FilmVO> getLatestFilms(int limit);
 
-    Page<FilmVO> searchMovies(String keyword, Pageable pageable);
+    Page<FilmVO> searchFilms(String keyword, Pageable pageable);
 
-    FilmVO updateMovieStatus(Long id, Integer status);
+    FilmVO updateFilmStatus(Long id, Integer status);
 
-    Page<FilmVO> getMovies(Long categoryId, Pageable pageable);
+    Page<FilmVO> getFilms(Long categoryId, Pageable pageable);
 
-    List<FilmVO> getFeaturedMovies(int limit);
+    List<FilmVO> getFeaturedFilms(int limit);
 
-    List<FilmVO> getPopularMovies(int limit);
+    List<FilmVO> getPopularFilms(int limit);
 } 

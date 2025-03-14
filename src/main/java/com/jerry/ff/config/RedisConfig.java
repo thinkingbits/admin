@@ -28,7 +28,7 @@ public class RedisConfig {
                 .cacheDefaults(config)
                 .withCacheConfiguration("categories", 
                         RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(24)))
-                .withCacheConfiguration("movies", 
+                .withCacheConfiguration("films",
                         RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(6)))
                 .build();
     }

@@ -15,6 +15,10 @@ public class Season {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "film_id")
+    private Film film;
+
     private Integer seasonNumber;
 
     private Integer totalEpisodes;

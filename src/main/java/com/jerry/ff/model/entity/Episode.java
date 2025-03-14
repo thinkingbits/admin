@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "episodes")
@@ -18,6 +19,9 @@ public class Episode {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "season_id")
     private Season season;
+
+    @OneToMany(mappedBy = "episode", fetch = FetchType.LAZY)
+    private List<Source> source;
 
     private Integer episodeNumber;
 

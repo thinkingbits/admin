@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "actors")
@@ -32,10 +33,13 @@ public class Actor {
     
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "actors")
+    private List<Film> films;
     
     @CreatedDate
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
     
     @LastModifiedDate
-    private LocalDateTime updateTime;
+    private LocalDateTime updateAt;
 } 

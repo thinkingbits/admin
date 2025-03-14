@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class PlayHistoryVO implements Serializable {
     
     private Long id;
-    private Long movieId;
-    private String movieTitle;
+    private Long filmId;
+    private String title;
     private String posterUrl;
     private Integer duration; // 电影总时长，单位：秒
     private Integer progress; // 播放进度，单位：秒

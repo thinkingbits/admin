@@ -1,8 +1,7 @@
 package com.jerry.ff.service.impl;
 
 import com.jerry.ff.model.vo.DashboardVO;
-import com.jerry.ff.repository.CommentRepository;
-import com.jerry.ff.repository.MovieRepository;
+import com.jerry.ff.repository.FilmRepository;
 import com.jerry.ff.repository.OrderRepository;
 import com.jerry.ff.repository.UserRepository;
 import com.jerry.ff.service.StatisticsService;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final UserRepository userRepository;
-    private final MovieRepository movieRepository;
+    private final FilmRepository movieRepository;
 //    private final CommentRepository commentRepository;
     private final OrderRepository orderRepository;
 
@@ -44,12 +43,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         
         // 查询总订单数、今日新增订单数、待支付订单数
         long totalOrders = orderRepository.count();
-        long todayNewOrders = orderRepository.countByCreateTimeBetween(todayStart, todayEnd);
+        long todayNewOrders = orderRepository.countByCreateAtBetween(todayStart, todayEnd);
         long pendingOrders = orderRepository.countByStatus(0);
         
         // 查询总收入和今日收入
         BigDecimal totalRevenue = orderRepository.sumAmountByStatus(1);
-        BigDecimal todayRevenue = orderRepository.sumAmountByStatusAndCreateTimeBetween(1, todayStart, todayEnd);
+        BigDecimal todayRevenue = orderRepository.sumAmountByStatusAndCreateAtBetween(1, todayStart, todayEnd);
         
         return DashboardVO.builder()
                 .totalUsers(totalUsers)

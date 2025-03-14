@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MovieRepository extends JpaRepository<Film, Long> {
+public interface FilmRepository extends JpaRepository<Film, Long> {
 
     Page<Film> findByStatus(Integer status, Pageable pageable);
 
@@ -20,21 +20,21 @@ public interface MovieRepository extends JpaRepository<Film, Long> {
     Page<Film> findByCategoryIdAndStatus(Long categoryId, Integer status, Pageable pageable);
 
     @Query("SELECT m FROM Film m WHERE m.title LIKE %:keyword% OR m.description LIKE %:keyword%")
-    Page<Film> searchMovies(@Param("keyword") String keyword, Pageable pageable);
+    Page<Film> searchFilms(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT m FROM Film m WHERE m.status = 1 ORDER BY m.rating DESC")
-    List<Film> findTopRatedMovies(Pageable pageable);
+    List<Film> findTopRatedFilms(Pageable pageable);
 
-    @Query("SELECT m FROM Film m WHERE m.status = 1 ORDER BY m.createTime DESC")
-    List<Film> findLatestMovies(Pageable pageable);
+    @Query("SELECT m FROM Film m WHERE m.status = 1 ORDER BY m.createAt DESC")
+    List<Film> findLatestFilms(Pageable pageable);
 
-    List<Film> findByStatusOrderByCreateTimeDesc(Integer status, Pageable pageable);
+    List<Film> findByStatusOrderByCreateAtDesc(Integer status, Pageable pageable);
     
-    List<Film> findByStatusOrderByReleaseDateDesc(Integer status, Pageable pageable);
+    List<Film> findByStatusOrderByAirDateDesc(Integer status, Pageable pageable);
     
     List<Film> findByStatusOrderByRatingDesc(Integer status, Pageable pageable);
     
     Page<Film> findByTitleContainingAndStatus(String keyword, Integer status, Pageable pageable);
     
-//    boolean existsByDirectorsId(Long directorId);
+    boolean existsByDirectorsId(Long directorId);
 } 

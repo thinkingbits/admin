@@ -38,6 +38,6 @@ public class SearchController {
         
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseResult.success(movieService.searchMovies(keyword, pageable));
+        return ResponseResult.success(movieService.searchFilms(keyword, pageable));
     }
 } 

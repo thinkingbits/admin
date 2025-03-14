@@ -61,5 +61,5 @@ public class User {
     private LocalDateTime lastLoginTime;
 
     @LastModifiedDate
-    private LocalDateTime updateTime;
+    private LocalDateTime updateAt;
 } 

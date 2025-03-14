@@ -42,7 +42,7 @@ public class Order {
     private String membershipType;
 
     @CreatedDate
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
 
-    private LocalDateTime payTime;
+    private LocalDateTime payAt;
 } 

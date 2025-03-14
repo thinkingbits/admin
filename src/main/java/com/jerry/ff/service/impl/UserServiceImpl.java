@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
             user.setAvatar(updateUserInfoDTO.getAvatar());
         }
         
-        user.setUpdateTime(LocalDateTime.now());
+        user.setUpdateAt(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
         
         return convertToUserVO(updatedUser);
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         
         // 更新密码
         user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
-        user.setUpdateTime(LocalDateTime.now());
+        user.setUpdateAt(LocalDateTime.now());
         userRepository.save(user);
     }
 
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("用户不存在，ID: " + id));
         
         user.setStatus(status);
-        user.setUpdateTime(LocalDateTime.now());
+        user.setUpdateAt(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
         
         return convertToUserVO(updatedUser);

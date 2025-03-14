@@ -12,9 +12,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching
 @EnableAsync
 @EnableScheduling
-public class MovieWebsiteApplication {
+public class FirstFlickApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MovieWebsiteApplication.class, args);
+        SpringApplication.run(FirstFlickApplication.class, args);
     }
 } 

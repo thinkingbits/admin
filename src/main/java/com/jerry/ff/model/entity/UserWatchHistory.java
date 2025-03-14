@@ -16,25 +16,26 @@ public class UserWatchHistory {
     private Long id;
     
     private Long userId;
-    private Long dramaId;
+
     private Long episodeId;
+
     private Integer progress;
     
     @Column(nullable = false)
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
     
     @Column(nullable = false)
-    private LocalDateTime updateTime;
+    private LocalDateTime updateAt;
     
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
-        createTime = now;
-        updateTime = now;
+        createAt = now;
+        updateAt = now;
     }
     
     @PreUpdate
     protected void onUpdate() {
-        updateTime = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
     }
 } 

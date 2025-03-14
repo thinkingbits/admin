@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PlayHistoryDTO {
     
     @NotNull(message = "电影ID不能为空")
-    private Long movieId;
+    private Long episodeId;
     
     private Integer duration; // 播放时长，单位：秒
     

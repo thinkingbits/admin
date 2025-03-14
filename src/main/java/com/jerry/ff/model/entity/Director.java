@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "directors")
@@ -23,13 +24,18 @@ public class Director {
     @Column(nullable = false)
     private String name;
 
+    private String originalName;
+
     private String biography;
 
     private String photoUrl;
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "directors")
+    private List<Film> films;
+
     @CreatedDate
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
 
     @LastModifiedDate  
-    private LocalDateTime updateTime;
+    private LocalDateTime updateAt;
 } 

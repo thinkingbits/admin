@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface PlayHistoryRepository extends JpaRepository<PlayHistory, Long> {
     
-    Optional<PlayHistory> findByUserIdAndMovieId(Long userId, Long movieId);
+    Optional<PlayHistory> findByUserIdAndEpisodeId(Long userId, Long episodeId);
     
     Page<PlayHistory> findByUserIdOrderByLastPlayTimeDesc(Long userId, Pageable pageable);
     

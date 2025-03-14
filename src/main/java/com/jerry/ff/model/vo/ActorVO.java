@@ -6,17 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DirectorVO implements Serializable {
+public class ActorVO implements Serializable {
     
     private Long id;
     private String name;
     private String originalName;
-    private String biography;
-    private String photoUrl;
     private String avatarUrl;
-}
+    private String description;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
+} 

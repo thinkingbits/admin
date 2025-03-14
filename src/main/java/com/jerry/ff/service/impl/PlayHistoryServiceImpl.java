@@ -3,11 +3,12 @@ package com.jerry.ff.service.impl;
 import com.jerry.ff.exception.BusinessException;
 import com.jerry.ff.exception.ResourceNotFoundException;
 import com.jerry.ff.model.dto.PlayHistoryDTO;
-import com.jerry.ff.model.entity.Film;
+import com.jerry.ff.model.entity.Episode;
 import com.jerry.ff.model.entity.PlayHistory;
 import com.jerry.ff.model.entity.User;
 import com.jerry.ff.model.vo.PlayHistoryVO;
-import com.jerry.ff.repository.MovieRepository;
+import com.jerry.ff.repository.EpisodeRepository;
+import com.jerry.ff.repository.FilmRepository;
 import com.jerry.ff.repository.PlayHistoryRepository;
 import com.jerry.ff.repository.UserRepository;
 import com.jerry.ff.service.PlayHistoryService;
@@ -28,7 +29,8 @@ public class PlayHistoryServiceImpl implements PlayHistoryService {
 
     private final PlayHistoryRepository playHistoryRepository;
     private final UserRepository userRepository;
-    private final MovieRepository movieRepository;
+    private final FilmRepository filmRepository;
+    private final EpisodeRepository episodeRepository;
 
     @Override
     @Transactional
@@ -36,14 +38,14 @@ public class PlayHistoryServiceImpl implements PlayHistoryService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
         
-        Film movie = movieRepository.findById(playHistoryDTO.getMovieId())
-                .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + playHistoryDTO.getMovieId()));
+        Episode episode = episodeRepository.findById(playHistoryDTO.getEpisodeId())
+                .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + playHistoryDTO.getEpisodeId()));
         
         // 查找是否有该用户的该电影的播放记录，如果有则更新，没有则创建
-        PlayHistory history = playHistoryRepository.findByUserIdAndMovieId(user.getId(), movie.getId())
+        PlayHistory history = playHistoryRepository.findByUserIdAndEpisodeId(user.getId(), episode.getId())
                 .orElse(PlayHistory.builder()
                         .user(user)
-                        .movie(movie)
+                        .episode(episode)
                         .build());
         
         history.setDuration(playHistoryDTO.getDuration());
@@ -98,9 +100,7 @@ public class PlayHistoryServiceImpl implements PlayHistoryService {
     private PlayHistoryVO convertToPlayHistoryVO(PlayHistory history) {
         return PlayHistoryVO.builder()
                 .id(history.getId())
-                .movieId(history.getMovie().getId())
-                .movieTitle(history.getMovie().getTitle())
-                .posterUrl(history.getMovie().getPosterUrl())
+                .filmId(history.getId())
                 .duration(history.getDuration())
                 .progress(history.getPlayPosition())
                 .playTime(history.getLastPlayTime())

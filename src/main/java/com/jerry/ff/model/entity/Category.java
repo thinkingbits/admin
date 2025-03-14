@@ -40,8 +40,8 @@ public class Category {
     private List<Category> children = new ArrayList<>();
 
     @CreatedDate
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
 
     @LastModifiedDate
-    private LocalDateTime updateTime;
+    private LocalDateTime updateAt;
 } 

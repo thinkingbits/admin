@@ -3,7 +3,7 @@ package com.jerry.ff.service.impl;
 import com.jerry.ff.model.dto.CommentDTO;
 import com.jerry.ff.model.vo.CommentVO;
 import com.jerry.ff.repository.CommentRepository;
-import com.jerry.ff.repository.MovieRepository;
+import com.jerry.ff.repository.FilmRepository;
 import com.jerry.ff.repository.UserRepository;
 import com.jerry.ff.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final MovieRepository movieRepository;
+    private final FilmRepository movieRepository;
 
     @Override
     public Page<CommentVO> getCommentsByMovie(Long movieId, Pageable pageable) {

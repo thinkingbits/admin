@@ -22,20 +22,22 @@ public class Film {
 
     private Integer type;
 
+    // 译名
     private String title;
 
+    // 原始名
     private String originalTitle;
 
+    // 评分
     private Double rating;
 
+    // 地区
     private String region;
 
     private String language;
 
     @Column(columnDefinition = "TEXT")
     private String description;
-
-    private Integer duration;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -47,47 +49,44 @@ public class Film {
 
     private String videoUrl;
 
-    private LocalDate releaseDate;
-
-    private LocalDate endDate;
-
-    private Integer seriesOrder;  // 在系列中的顺序，比如第1部、第2部等
+    // 发行时间
+    private LocalDate airDate;
 
     @Column(nullable = false)
     @Builder.Default
     private Integer status = 1; // 0-下架, 1-上架
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "actors",
+            name = "film_actors",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
     private List<Actor> actors;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "directors",
+            name = "film_directors",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "director_id")
     )
     private List<Director> directors;
 
     @Column(nullable = false)
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
 
     @Column(nullable = false)
-    private LocalDateTime updateTime;
+    private LocalDateTime updateAt;
 
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
-        createTime = now;
-        updateTime = now;
+        createAt = now;
+        updateAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updateTime = LocalDateTime.now();
+        updateAt = LocalDateTime.now();
     }
 } 

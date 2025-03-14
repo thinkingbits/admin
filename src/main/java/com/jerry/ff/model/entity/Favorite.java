@@ -31,10 +31,10 @@ public class Favorite {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Long mediaId;
-
-    private Integer mediaType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "episode_id", nullable = false)
+    private Episode episode;
 
     @CreatedDate
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
 } 

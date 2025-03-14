@@ -29,9 +29,9 @@ public class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Integer mediaType;
-
-    private Long mediaId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "episode_id", nullable = false)
+    private Episode episode;
 
     private Integer rating;
 
@@ -39,5 +39,5 @@ public class Comment {
     private Integer status = 0; // 0-待审核, 1-通过, 2-拒绝
 
     @CreatedDate
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
 } 

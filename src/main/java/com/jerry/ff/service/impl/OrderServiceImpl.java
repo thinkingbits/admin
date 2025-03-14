@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
                 .amount(orderDTO.getAmount())
                 .status(0) // 未支付状态
                 .membershipType(orderDTO.getMembershipType())
-                .createTime(LocalDateTime.now())
+                .createAt(LocalDateTime.now())
                 .build();
         
         Order savedOrder = orderRepository.save(order);
@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
         
         order.setStatus(1); // 已支付
         order.setPaymentMethod(paymentMethod);
-        order.setPayTime(LocalDateTime.now());
+        order.setPayAt(LocalDateTime.now());
         
         Order updatedOrder = orderRepository.save(order);
         
@@ -115,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
         if (status != null) {
             orderPage = orderRepository.findByStatus(status, pageable);
         } else if (startTime != null && endTime != null) {
-            orderPage = orderRepository.findByCreateTimeBetween(startTime, endTime, pageable);
+            orderPage = orderRepository.findByCreateAtBetween(startTime, endTime, pageable);
         } else {
             orderPage = orderRepository.findAll(pageable);
         }
@@ -195,8 +195,8 @@ public class OrderServiceImpl implements OrderService {
                 .statusDesc(statusDesc)
                 .paymentMethod(order.getPaymentMethod())
                 .membershipType(order.getMembershipType())
-                .createTime(order.getCreateTime())
-                .payTime(order.getPayTime())
+                .createTime(order.getCreateAt())
+                .payTime(order.getPayAt())
                 .build();
     }
     

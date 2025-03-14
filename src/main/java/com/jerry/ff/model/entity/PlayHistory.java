@@ -29,8 +29,8 @@ public class PlayHistory {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false)
-    private Film movie;
+    @JoinColumn(name = "episode_id", nullable = false)
+    private Episode episode;
 
     @Column(name = "play_position")
     private Integer playPosition = 0;  // 播放位置（秒）
@@ -46,9 +46,9 @@ public class PlayHistory {
 
     @CreatedDate
     @Column(name = "create_time", updatable = false)
-    private LocalDateTime createTime;    // 首次播放时间
+    private LocalDateTime createAt;    // 首次播放时间
 
     @LastModifiedDate
     @Column(name = "update_time")
-    private LocalDateTime updateTime;    // 更新时间
+    private LocalDateTime updateAt;    // 更新时间
 } 

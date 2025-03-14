@@ -1,22 +1,25 @@
-package com.jerry.ff.model.vo;
+package com.jerry.ff.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DirectorVO implements Serializable {
+public class ActorDTO {
     
     private Long id;
+    
+    @NotBlank(message = "演员名称不能为空")
     private String name;
+    
     private String originalName;
-    private String biography;
-    private String photoUrl;
+    
     private String avatarUrl;
-}
+    
+    private String description;
+} 

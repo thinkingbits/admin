@@ -22,9 +22,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     
     Page<Order> findByStatus(Integer status, Pageable pageable);
     
-    Page<Order> findByCreateTimeBetween(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
+    Page<Order> findByCreateAtBetween(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
 
-    long countByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
+    long countByCreateAtBetween(LocalDateTime start, LocalDateTime end);
     
     long countByStatus(Integer status);
     
@@ -32,20 +32,20 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     BigDecimal sumAmountByStatus(@Param("status") Integer status);
     
     
-    @Query("SELECT SUM(o.amount) FROM Order o WHERE o.status = :status AND o.createTime BETWEEN :start AND :end")
-    BigDecimal sumAmountByStatusAndCreateTimeBetween(
+    @Query("SELECT SUM(o.amount) FROM Order o WHERE o.status = :status AND o.createAt BETWEEN :start AND :end")
+    BigDecimal sumAmountByStatusAndCreateAtBetween(
             @Param("status") Integer status, 
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
             
-    @Query("SELECT DATE(o.createTime) as date, COUNT(o) as count FROM Order o " +
-           "WHERE o.createTime BETWEEN :start AND :end GROUP BY DATE(o.createTime)")
+    @Query("SELECT DATE(o.createAt) as date, COUNT(o) as count FROM Order o " +
+           "WHERE o.createAt BETWEEN :start AND :end GROUP BY DATE(o.createAt)")
     List<Object[]> countOrdersByDayBetween(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
             
-    @Query("SELECT DATE(o.createTime) as date, SUM(o.amount) as revenue FROM Order o " +
-           "WHERE o.status = 1 AND o.createTime BETWEEN :start AND :end GROUP BY DATE(o.createTime)")
+    @Query("SELECT DATE(o.createAt) as date, SUM(o.amount) as revenue FROM Order o " +
+           "WHERE o.status = 1 AND o.createAt BETWEEN :start AND :end GROUP BY DATE(o.createAt)")
     List<Object[]> sumRevenueByDayBetween(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
