@@ -44,7 +44,7 @@ public class FilmServiceImpl implements FilmService {
     private final ActorRepository actorRepository;
 
     @Override
-//    @Cacheable(value = "films", key = "'category_' + #categoryId + '_page_' + #pageable.pageNumber")
+    @Cacheable(value = "films", key = "'category_' + #categoryId + '_page_' + #pageable.pageNumber")
     public Page<FilmVO> getFilms(Long categoryId, Pageable pageable) {
         if (pageable == null) {
             throw new BusinessException("分页参数不能为空");
@@ -61,7 +61,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-//    @Cacheable(value = "films", key = "'film_' + #id")
+    @Cacheable(value = "films", key = "'film_' + #id")
     public FilmVO getFilm(Long id) {
         if (id == null) {
             throw new BusinessException("电影ID不能为空");
@@ -75,7 +75,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
-//    @CacheEvict(value = "films", allEntries = true)
+    @CacheEvict(value = "films", allEntries = true)
     public FilmVO createFilm(FilmDTO filmDTO) {
         validateFilmDTO(filmDTO);
 
@@ -107,7 +107,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
-//    @CacheEvict(value = "films", allEntries = true)
+    @CacheEvict(value = "films", allEntries = true)
     public FilmVO updateFilm(Long id, FilmDTO filmDTO) {
         if (id == null) {
             throw new BusinessException("电影ID不能为空");
@@ -143,7 +143,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
-//    @CacheEvict(value = "films", allEntries = true)
+    @CacheEvict(value = "films", allEntries = true)
     public void deleteFilm(Long id) {
         if (id == null) {
             throw new BusinessException("电影ID不能为空");
@@ -158,7 +158,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
-//    @CacheEvict(value = "films", allEntries = true)
+    @CacheEvict(value = "films", allEntries = true)
     public FilmVO updateFilmStatus(Long id, Integer status) {
         if (id == null) {
             throw new BusinessException("电影ID不能为空");
@@ -178,7 +178,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-//    @Cacheable(value = "films", key = "'featured_' + #limit")
+    @Cacheable(value = "films", key = "'featured_' + #limit")
     public List<FilmVO> getFeaturedFilms(int limit) {
         if (limit <= 0) {
             return Collections.emptyList();
@@ -190,7 +190,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-//    @Cacheable(value = "films", key = "'latest_' + #limit")
+    @Cacheable(value = "films", key = "'latest_' + #limit")
     public List<FilmVO> getLatestFilms(int limit) {
         if (limit <= 0) {
             return Collections.emptyList();
@@ -202,7 +202,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-//    @Cacheable(value = "films", key = "'popular_' + #limit")
+    @Cacheable(value = "films", key = "'popular_' + #limit")
     public List<FilmVO> getPopularFilms(int limit) {
         if (limit <= 0) {
             return Collections.emptyList();

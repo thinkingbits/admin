@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableCaching
+//@EnableCaching
 @EnableAsync
 @EnableScheduling
 public class FirstFlickApplication {
