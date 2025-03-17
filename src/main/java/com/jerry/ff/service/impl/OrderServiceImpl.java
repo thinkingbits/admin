@@ -74,32 +74,31 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderVO payOrder(Long id, String paymentMethod) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("订单不存在，ID: " + id));
-        
+                .orElseThrow(() -> new BusinessException(404, "Order not found"));
+
         if (order.getStatus() != 0) {
-            throw new BusinessException(400, "订单状态不允许支付");
+            throw new BusinessException(400, "Order status does not allow payment");
         }
-        
-        order.setStatus(1); // 已支付
+
+        order.setStatus(1);
         order.setPaymentMethod(paymentMethod);
         order.setPayAt(LocalDateTime.now());
-        
-        Order updatedOrder = orderRepository.save(order);
-        
+        Order savedOrder = orderRepository.save(order);
+
         // 更新用户会员等级
         upgradeUserMembership(order.getUser(), order.getMembershipType());
-        
-        return convertToOrderVO(updatedOrder);
+
+        return convertToOrderVO(savedOrder);
     }
 
     @Override
     @Transactional
     public OrderVO cancelOrder(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("订单不存在，ID: " + id));
-        
+                .orElseThrow(() -> new BusinessException(404, "Order not found"));
+
         if (order.getStatus() != 0) {
-            throw new BusinessException(400, "只能取消未支付的订单");
+            throw new BusinessException(400, "Only unpaid orders can be cancelled");
         }
         
         order.setStatus(2); // 已取消
@@ -158,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
             // 如果是VIP会员，添加VIP角色
             if (memberLevel > 0) {
                 Role vipRole = roleRepository.findByName("VIP")
-                        .orElseThrow(() -> new BusinessException(500, "系统错误：VIP角色不存在"));
+                        .orElseThrow(() -> new BusinessException(500, "System error: VIP role not found"));
                 
                 if (user.getRoles().stream().noneMatch(role -> role.getName().equals("VIP"))) {
                     user.getRoles().add(vipRole);

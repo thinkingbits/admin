@@ -20,6 +20,6 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
     @Modifying
     void incrementViewCount(@Param("episodeId") Long episodeId);
 
-    List<Episode> findByFilmId(Long filmId);
-    Optional<Episode> findFirstByFilmIdOrderByEpisodeNumberAsc(Long filmId);
+    List<Episode> findBySeasonId(Long seasonId);
+    Optional<Episode> findFirstBySeasonIdOrderByEpisodeNumberAsc(Long seasonId);
 } 

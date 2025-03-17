@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     @CacheEvict(value = {"categories", "parentCategories", "childCategories"}, allEntries = true)
     public CategoryVO createCategory(CategoryDTO categoryDTO) {
         if (categoryRepository.existsByName(categoryDTO.getName())) {
-            throw new BusinessException(400, "分类名称已存在");
+            throw new BusinessException(400, "Category name already exists");
         }
 
         Category parent = null;
@@ -90,13 +90,13 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (!category.getName().equals(categoryDTO.getName()) && 
                 categoryRepository.existsByName(categoryDTO.getName())) {
-            throw new BusinessException(400, "分类名称已存在");
+            throw new BusinessException(400, "Category name already exists");
         }
 
         Category parent = null;
         if (categoryDTO.getParentId() != null) {
             if (categoryDTO.getParentId().equals(id)) {
-                throw new BusinessException(400, "分类不能作为自己的父分类");
+                throw new BusinessException(400, "Category cannot be its own parent");
             }
             parent = categoryRepository.findById(categoryDTO.getParentId())
                     .orElseThrow(() -> new ResourceNotFoundException("父分类不存在，ID: " + categoryDTO.getParentId()));
@@ -118,7 +118,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("分类不存在，ID: " + id));
         
         if (!category.getChildren().isEmpty()) {
-            throw new BusinessException(400, "该分类下有子分类，无法删除");
+            throw new BusinessException(400, "Cannot delete category with child categories");
         }
         
         categoryRepository.delete(category);

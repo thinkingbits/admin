@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new EntityNotFoundException("Film not found with id: " + movieId));
         
         // 这里简化处理，假设评论是针对电影的第一集
-        Episode episode = episodeRepository.findFirstByFilmIdOrderByEpisodeNumberAsc(film.getId())
+        Episode episode = episodeRepository.findFirstBySeasonIdOrderByEpisodeNumberAsc(film.getId())
                 .orElseThrow(() -> new EntityNotFoundException("No episodes found for film: " + movieId));
         
         Comment comment = Comment.builder()

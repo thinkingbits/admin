@@ -10,4 +10,6 @@ public interface AuthService {
     JwtResponse login(LoginRequest loginRequest);
     
     UserVO register(RegisterRequest registerRequest);
+
+    JwtResponse refreshToken(String token);
 } 

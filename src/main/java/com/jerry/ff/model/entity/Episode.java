@@ -21,7 +21,10 @@ public class Episode {
     private Season season;
 
     @OneToMany(mappedBy = "episode", fetch = FetchType.LAZY)
-    private List<Source> source;
+    private List<Source> sources;
+
+    @OneToMany(mappedBy = "episode", fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     private Integer episodeNumber;
 

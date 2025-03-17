@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,15 +78,15 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserVO register(RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new BusinessException(400, "用户名已存在");
+            throw new BusinessException(400, "Username already exists");
         }
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new BusinessException(400, "邮箱已被注册");
+            throw new BusinessException(400, "Email already registered");
         }
 
         Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() -> new BusinessException(500, "系统错误：用户角色不存在"));
+                .orElseThrow(() -> new BusinessException(500, "System error: User role not found"));
 
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
@@ -114,6 +115,42 @@ public class AuthServiceImpl implements AuthService {
                 .roles(savedUser.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                 .registerTime(savedUser.getRegisterTime())
                 .lastLoginTime(savedUser.getLastLoginTime())
+                .build();
+    }
+
+    @Override
+    public JwtResponse refreshToken(String token) {
+        if (!tokenProvider.validateToken(token)) {
+            throw new BusinessException("Invalid token");
+        }
+
+        String username = tokenProvider.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .collect(Collectors.toList())
+        );
+
+        String newToken = tokenProvider.generateToken(authentication);
+        
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getName().replace("ROLE_", ""))
+                .collect(Collectors.toList());
+
+        return JwtResponse.builder()
+                .token(newToken)
+                .tokenType("Bearer")
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .avatar(user.getAvatar())
+                .roles(roles)
+                .memberLevel(user.getMemberLevel())
                 .build();
     }
 } 
