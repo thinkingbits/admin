@@ -19,4 +19,7 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
     @Query("UPDATE Episode e SET e.viewCount = e.viewCount + 1 WHERE e.id = :episodeId")
     @Modifying
     void incrementViewCount(@Param("episodeId") Long episodeId);
+
+    List<Episode> findByFilmId(Long filmId);
+    Optional<Episode> findFirstByFilmIdOrderByEpisodeNumberAsc(Long filmId);
 } 

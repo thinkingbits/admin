@@ -1,10 +1,19 @@
 package com.jerry.ff.controller;
 
+import com.jerry.ff.model.vo.FavoriteVO;
 import com.jerry.ff.service.FavoriteService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/favorites")
@@ -15,43 +24,68 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-//    @PostMapping("/movies/{movieId}")
-//    @Operation(summary = "收藏电影", description = "收藏指定电影")
-//    public ResponseResult<Boolean> addFavorite(
-//            @PathVariable Long movieId,
-//            @AuthenticationPrincipal UserDetails userDetails) {
-//
-//        favoriteService.addFavorite(userDetails.getUsername(), movieId);
-//        return ResponseResult.success(true);
-//    }
-//
-//    @DeleteMapping("/movies/{movieId}")
-//    @Operation(summary = "取消收藏", description = "取消收藏指定电影")
-//    public ResponseResult<Boolean> removeFavorite(
-//            @PathVariable Long movieId,
-//            @AuthenticationPrincipal UserDetails userDetails) {
-//
-//        favoriteService.removeFavorite(userDetails.getUsername(), movieId);
-//        return ResponseResult.success(true);
-//    }
-//
-//    @GetMapping("/movies")
-//    @Operation(summary = "获取收藏的电影", description = "获取当前用户收藏的所有电影")
-//    public ResponseResult<Page<MovieVO>> getFavoriteMovies(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @AuthenticationPrincipal UserDetails userDetails) {
-//
-//        Pageable pageable = PageRequest.of(page, size);
-//        return ResponseResult.success(favoriteService.getFavoriteMovies(userDetails.getUsername(), pageable));
-//    }
-//
-//    @GetMapping("/check/{movieId}")
-//    @Operation(summary = "检查收藏状态", description = "检查当前用户是否已收藏指定电影")
-//    public ResponseResult<Boolean> checkFavorite(
-//            @PathVariable Long movieId,
-//            @AuthenticationPrincipal UserDetails userDetails) {
-//
-//        return ResponseResult.success(favoriteService.checkFavorite(userDetails.getUsername(), movieId));
-//    }
+    @GetMapping
+    public ResponseEntity<Page<FavoriteVO>> getUserFavorites(
+            Pageable pageable,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(favoriteService.getUserFavorites(userDetails.getUsername(), pageable));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<FavoriteVO>> getUserFavorites(
+            @PathVariable Long userId,
+            Pageable pageable) {
+        return ResponseEntity.ok(favoriteService.getUserFavorites(userId, pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FavoriteVO> getFavoriteById(@PathVariable Long id) {
+        return ResponseEntity.ok(favoriteService.findById(id));
+    }
+
+    @PostMapping("/episode/{episodeId}")
+    public ResponseEntity<FavoriteVO> addFavorite(
+            @PathVariable Long episodeId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(favoriteService.addFavorite(episodeId, userDetails.getUsername()));
+    }
+
+    @DeleteMapping("/episode/{episodeId}")
+    public ResponseEntity<Void> removeFavorite(
+            @PathVariable Long episodeId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        favoriteService.removeFavorite(episodeId, userDetails.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/check/{episodeId}")
+    public ResponseEntity<Map<String, Boolean>> checkFavorite(
+            @PathVariable Long episodeId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        boolean isFavorite = favoriteService.isFavorite(episodeId, userDetails.getUsername());
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("favorite", isFavorite);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<FavoriteVO> createFavorite(@RequestBody FavoriteVO favoriteVO) {
+        return ResponseEntity.ok(favoriteService.create(favoriteVO));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<FavoriteVO> updateFavorite(
+            @PathVariable Long id,
+            @RequestBody FavoriteVO favoriteVO) {
+        return ResponseEntity.ok(favoriteService.update(id, favoriteVO));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteFavorite(@PathVariable Long id) {
+        favoriteService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 } 
