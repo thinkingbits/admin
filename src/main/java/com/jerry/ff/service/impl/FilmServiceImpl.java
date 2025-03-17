@@ -8,6 +8,8 @@ import com.jerry.ff.model.entity.Category;
 import com.jerry.ff.model.entity.Director;
 import com.jerry.ff.model.entity.Film;
 import com.jerry.ff.model.vo.ActorVO;
+import com.jerry.ff.model.vo.CategoryVO;
+import com.jerry.ff.model.vo.DirectorVO;
 import com.jerry.ff.model.vo.FilmVO;
 import com.jerry.ff.repository.ActorRepository;
 import com.jerry.ff.repository.CategoryRepository;
@@ -337,13 +339,15 @@ public class FilmServiceImpl implements FilmService {
                 .bannerUrl(film.getBannerUrl())
                 .videoUrl(film.getVideoUrl())
                 .airDate(film.getAirDate())
-                .categoryId(film.getCategory() != null ? film.getCategory().getId() : null)
-                .categoryName(film.getCategory() != null ? film.getCategory().getName() : null)
                 .status(film.getStatus())
                 .createAt(film.getCreateAt())
                 .updateAt(film.getUpdateAt())
+                .category(CategoryVO.builder()
+                        .id(film.getCategory() != null ? film.getCategory().getId() : null)
+                        .name(film.getCategory() != null ? film.getCategory().getName() : null)
+                        .build())
                 .directors(film.getDirectors().stream()
-                        .map(director -> FilmVO.DirectorVO.builder()
+                        .map(director -> DirectorVO.builder()
                                 .id(director.getId())
                                 .name(director.getName())
                                 .build())

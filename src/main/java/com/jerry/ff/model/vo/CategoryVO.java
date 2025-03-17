@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,14 +12,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryVO implements Serializable {
-    
+public class CategoryVO {
     private Long id;
     private String name;
     private String description;
     private Long parentId;
     private String parentName;
     private List<CategoryVO> children;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 } 

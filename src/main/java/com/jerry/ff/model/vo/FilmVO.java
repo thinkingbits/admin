@@ -30,20 +30,11 @@ public class FilmVO implements Serializable {
     private String videoUrl;
     private LocalDate airDate;
     private Double rating;
-    private Long categoryId;
-    private String categoryName;
     private Integer status;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private List<DirectorVO> directors;
     private List<ActorVO> actors;
+    private CategoryVO category;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DirectorVO implements Serializable {
-        private Long id;
-        private String name;
-    }
 } 

@@ -129,8 +129,8 @@ public class CategoryServiceImpl implements CategoryService {
                 .id(category.getId())
                 .name(category.getName())
                 .description(category.getDescription())
-                .createTime(category.getCreateAt())
-                .updateTime(category.getUpdateAt());
+                .createAt(category.getCreateAt())
+                .updateAt(category.getUpdateAt());
 
         if (category.getParent() != null) {
             builder.parentId(category.getParent().getId());
@@ -145,8 +145,8 @@ public class CategoryServiceImpl implements CategoryService {
                             .description(child.getDescription())
                             .parentId(category.getId())
                             .parentName(category.getName())
-                            .createTime(child.getCreateAt())
-                            .updateTime(child.getUpdateAt())
+                            .createAt(child.getCreateAt())
+                            .updateAt(child.getUpdateAt())
                             .build())
                     .collect(Collectors.toList());
             builder.children(childrenVO);
