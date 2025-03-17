@@ -33,4 +33,13 @@ public class AuthController {
     public ResponseResult<UserVO> register(@Valid @RequestBody RegisterRequest registerRequest) {
         return ResponseResult.success(authService.register(registerRequest));
     }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "刷新令牌", description = "使用旧令牌获取新的JWT令牌")
+    public ResponseResult<JwtResponse> refreshToken(@RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        return ResponseResult.success(authService.refreshToken(token));
+    }
 } 

@@ -35,15 +35,15 @@ public class ActorServiceImpl implements ActorService {
     @CacheEvict(value = "actors", allEntries = true)
     public ActorVO createActor(ActorDTO actorDTO) {
         if (actorDTO == null) {
-            throw new BusinessException("演员信息不能为空");
+            throw new BusinessException(400, "Actor information cannot be empty");
         }
 
         if (!StringUtils.hasText(actorDTO.getName())) {
-            throw new BusinessException("演员名称不能为空");
+            throw new BusinessException(400, "Actor name cannot be empty");
         }
 
         if (actorRepository.existsByName(actorDTO.getName().trim())) {
-            throw new BusinessException("演员名称已存在");
+            throw new BusinessException(400, "Actor name already exists");
         }
 
         Actor actor = Actor.builder()
@@ -63,19 +63,19 @@ public class ActorServiceImpl implements ActorService {
     @CacheEvict(value = "actors", allEntries = true)
     public ActorVO updateActor(Long id, ActorDTO actorDTO) {
         if (id == null || actorDTO == null) {
-            throw new BusinessException("演员ID和信息不能为空");
+            throw new BusinessException(400, "Actor ID and information cannot be empty");
         }
 
         if (!StringUtils.hasText(actorDTO.getName())) {
-            throw new BusinessException("演员名称不能为空");
+            throw new BusinessException(400, "Actor name cannot be empty");
         }
 
         Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("演员不存在，ID: " + id));
+                .orElseThrow(() -> new BusinessException(404, "Actor not found"));
 
         String newName = actorDTO.getName().trim();
         if (!actor.getName().equals(newName) && actorRepository.existsByName(newName)) {
-            throw new BusinessException("演员名称已存在");
+            throw new BusinessException(400, "Actor name already exists");
         }
 
         actor.setName(newName);
@@ -93,25 +93,26 @@ public class ActorServiceImpl implements ActorService {
     @CacheEvict(value = "actors", allEntries = true)
     public void deleteActor(Long id) {
         if (id == null) {
-            throw new BusinessException("演员ID不能为空");
+            throw new BusinessException(400, "Actor ID cannot be empty");
         }
 
-        Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("演员不存在，ID: " + id));
+        if (!actorRepository.existsById(id)) {
+            throw new BusinessException(404, "Actor not found");
+        }
         
-        actorRepository.delete(actor);
-        log.info("Deleted actor: {}", actor.getName());
+        actorRepository.deleteById(id);
+        log.info("Deleted actor: {}", id);
     }
 
     @Override
     @Cacheable(value = "actors", key = "'actor_' + #id")
     public ActorVO getActor(Long id) {
         if (id == null) {
-            throw new BusinessException("演员ID不能为空");
+            throw new BusinessException(400, "Actor ID cannot be empty");
         }
 
         Actor actor = actorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("演员不存在，ID: " + id));
+                .orElseThrow(() -> new BusinessException(404, "Actor not found"));
         
         return convertToActorVO(actor);
     }
@@ -120,7 +121,7 @@ public class ActorServiceImpl implements ActorService {
     @Cacheable(value = "actors", key = "'all_page_' + #pageable.pageNumber")
     public Page<ActorVO> getAllActors(Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
 
         Page<Actor> actorPage = actorRepository.findAll(pageable);
@@ -130,7 +131,7 @@ public class ActorServiceImpl implements ActorService {
     @Override
     public Page<ActorVO> searchActors(String keyword, Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
 
         if (!StringUtils.hasText(keyword)) {
@@ -145,7 +146,7 @@ public class ActorServiceImpl implements ActorService {
     @Cacheable(value = "actors", key = "'film_' + #filmId")
     public List<ActorVO> getActorsByFilm(Long filmId) {
         if (filmId == null) {
-            throw new BusinessException("电影ID不能为空");
+            throw new BusinessException(400, "Film ID cannot be empty");
         }
 
         List<Actor> actors = actorRepository.findByFilmId(filmId);

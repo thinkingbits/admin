@@ -74,18 +74,14 @@ public class PlayHistoryServiceImpl implements PlayHistoryService {
     @Override
     @Transactional
     public void deletePlayHistory(Long id, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在"));
-        
-        PlayHistory history = playHistoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("播放历史记录不存在，ID: " + id));
-        
-        // 验证是否是该用户的播放记录
-        if (!history.getUser().getId().equals(user.getId())) {
-            throw new BusinessException(403, "无权操作此播放记录");
+        PlayHistory playHistory = playHistoryRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(404, "Play history not found"));
+
+        if (!playHistory.getUser().getUsername().equals(username)) {
+            throw new BusinessException(403, "No permission to operate this play history");
         }
-        
-        playHistoryRepository.deleteById(id);
+
+        playHistoryRepository.delete(playHistory);
     }
 
     @Override

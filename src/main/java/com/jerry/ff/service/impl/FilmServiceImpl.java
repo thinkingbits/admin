@@ -49,7 +49,7 @@ public class FilmServiceImpl implements FilmService {
     @Cacheable(value = "films", key = "'category_' + #categoryId + '_page_' + #pageable.pageNumber")
     public Page<FilmVO> getFilms(Long categoryId, Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
 
         Page<Film> filmPage;
@@ -66,11 +66,11 @@ public class FilmServiceImpl implements FilmService {
     @Cacheable(value = "films", key = "'film_' + #id")
     public FilmVO getFilm(Long id) {
         if (id == null) {
-            throw new BusinessException("电影ID不能为空");
+            throw new BusinessException(400, "Film ID cannot be empty");
         }
 
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
+                .orElseThrow(() -> new BusinessException(404, "Film not found"));
         
         return convertToFilmVO(film);
     }
@@ -112,12 +112,12 @@ public class FilmServiceImpl implements FilmService {
     @CacheEvict(value = "films", allEntries = true)
     public FilmVO updateFilm(Long id, FilmDTO filmDTO) {
         if (id == null) {
-            throw new BusinessException("电影ID不能为空");
+            throw new BusinessException(400, "Film ID cannot be empty");
         }
         validateFilmDTO(filmDTO);
 
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
+                .orElseThrow(() -> new BusinessException(404, "Film not found"));
         
         Category category = getCategoryById(filmDTO.getCategoryId());
         List<Director> directors = getDirectorsByIds(filmDTO.getDirectorIds());
@@ -148,14 +148,13 @@ public class FilmServiceImpl implements FilmService {
     @CacheEvict(value = "films", allEntries = true)
     public void deleteFilm(Long id) {
         if (id == null) {
-            throw new BusinessException("电影ID不能为空");
+            throw new BusinessException(400, "Film ID cannot be empty");
         }
-
-        Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
-        
-        filmRepository.delete(film);
-        log.info("Deleted film: {}", film.getTitle());
+        if (!filmRepository.existsById(id)) {
+            throw new BusinessException(404, "Film not found");
+        }
+        filmRepository.deleteById(id);
+        log.info("Deleted film: {}", id);
     }
 
     @Override
@@ -163,15 +162,14 @@ public class FilmServiceImpl implements FilmService {
     @CacheEvict(value = "films", allEntries = true)
     public FilmVO updateFilmStatus(Long id, Integer status) {
         if (id == null) {
-            throw new BusinessException("电影ID不能为空");
+            throw new BusinessException(400, "Film ID cannot be empty");
         }
-
         if (status != 0 && status != 1) {
-            throw new BusinessException("无效的状态值，状态必须为0或1");
+            throw new BusinessException(400, "Invalid status value, status must be 0 or 1");
         }
         
         Film film = filmRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("电影不存在，ID: " + id));
+                .orElseThrow(() -> new BusinessException(404, "Film not found"));
         
         film.setStatus(status);
         Film updatedFilm = filmRepository.save(film);
@@ -218,7 +216,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Page<FilmVO> searchFilms(String keyword, Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
 
         if (!StringUtils.hasText(keyword)) {
@@ -232,31 +230,27 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Page<FilmVO> getAllFilms(Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
-
-        Page<Film> filmPage = filmRepository.findAll(pageable);
-        return convertToFilmVOPage(filmPage);
+        return filmRepository.findAll(pageable).map(this::convertToFilmVO);
     }
 
     @Override
     public Page<FilmVO> getFilmsByCategory(Long categoryId, Pageable pageable) {
-        if (categoryId == null) {
-            throw new BusinessException("分类ID不能为空");
-        }
-
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
-
-        Page<Film> filmPage = filmRepository.findByCategoryId(categoryId, pageable);
-        return convertToFilmVOPage(filmPage);
+        if (categoryId == null) {
+            throw new BusinessException(400, "Category ID cannot be empty");
+        }
+        return filmRepository.findByCategoryId(categoryId, pageable)
+                .map(this::convertToFilmVO);
     }
 
     @Override
     public Page<FilmVO> getActiveFilms(Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException(400, "Page parameters cannot be empty");
         }
 
         Page<Film> filmPage = filmRepository.findByStatus(1, pageable);
@@ -276,25 +270,25 @@ public class FilmServiceImpl implements FilmService {
 
     private void validateFilmDTO(FilmDTO filmDTO) {
         if (filmDTO == null) {
-            throw new BusinessException("电影信息不能为空");
+            throw new BusinessException(400, "Film information cannot be empty");
         }
 
         if (!StringUtils.hasText(filmDTO.getTitle())) {
-            throw new BusinessException("电影标题不能为空");
+            throw new BusinessException(400, "Film title cannot be empty");
         }
 
         if (filmDTO.getAirDate() == null) {
-            throw new BusinessException("发行日期不能为空");
+            throw new BusinessException(400, "Release date cannot be empty");
         }
 
         if (filmDTO.getCategoryId() == null) {
-            throw new BusinessException("分类ID不能为空");
+            throw new BusinessException(400, "Category ID cannot be empty");
         }
     }
 
     private Category getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("分类不存在，ID: " + categoryId));
+                .orElseThrow(() -> new BusinessException(404, "Category not found"));
     }
 
     private List<Director> getDirectorsByIds(List<Long> directorIds) {
@@ -305,7 +299,7 @@ public class FilmServiceImpl implements FilmService {
         return directorIds.stream()
                 .filter(Objects::nonNull)
                 .map(id -> directorRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("导演不存在，ID: " + id)))
+                        .orElseThrow(() -> new BusinessException(404, "Director not found")))
                 .collect(Collectors.toList());
     }
 
@@ -317,7 +311,7 @@ public class FilmServiceImpl implements FilmService {
         return actorIds.stream()
                 .filter(Objects::nonNull)
                 .map(id -> actorRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("演员不存在，ID: " + id)))
+                        .orElseThrow(() -> new BusinessException(404, "Actor not found")))
                 .collect(Collectors.toList());
     }
 

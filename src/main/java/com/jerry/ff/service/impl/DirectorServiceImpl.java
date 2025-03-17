@@ -40,7 +40,7 @@ public class DirectorServiceImpl implements DirectorService {
 
         String name = directorDTO.getName().trim();
         if (directorRepository.existsByName(name)) {
-            throw new BusinessException("导演名称已存在");
+            throw new BusinessException("Director name already exists");
         }
 
         Director director = Director.builder()
@@ -66,7 +66,7 @@ public class DirectorServiceImpl implements DirectorService {
 
         String newName = directorDTO.getName().trim();
         if (!director.getName().equals(newName) && directorRepository.existsByName(newName)) {
-            throw new BusinessException("导演名称已存在");
+            throw new BusinessException("Director name already exists");
         }
 
         director.setName(newName);
@@ -88,7 +88,7 @@ public class DirectorServiceImpl implements DirectorService {
         Director director = getDirectorById(id);
 
         if (filmRepository.existsByDirectorsId(id)) {
-            throw new BusinessException("该导演已关联电影，无法删除");
+            throw new BusinessException("Cannot delete director with associated films");
         }
 
         directorRepository.delete(director);
@@ -138,7 +138,7 @@ public class DirectorServiceImpl implements DirectorService {
 
     @Cacheable(value = "directors", key = "'film_' + #filmId", unless = "#result.isEmpty()")
     public List<DirectorVO> getDirectorsByFilm(Long filmId) {
-        validateId(filmId, "电影ID");
+        validateId(filmId, "Film ID");
 
         List<Director> directors = directorRepository.findByFilmId(filmId);
         return directors.stream()
@@ -170,47 +170,47 @@ public class DirectorServiceImpl implements DirectorService {
 
     private void validateDirectorDTO(DirectorDTO directorDTO) {
         if (directorDTO == null) {
-            throw new BusinessException("导演信息不能为空");
+            throw new BusinessException("Director information cannot be empty");
         }
 
         if (!StringUtils.hasText(directorDTO.getName())) {
-            throw new BusinessException("导演名称不能为空");
+            throw new BusinessException("Director name cannot be empty");
         }
 
         if (directorDTO.getName().length() > 100) {
-            throw new BusinessException("导演名称长度不能超过100个字符");
+            throw new BusinessException("Director name cannot exceed 100 characters");
         }
 
         if (StringUtils.hasText(directorDTO.getBiography()) && directorDTO.getBiography().length() > 500) {
-            throw new BusinessException("导演描述长度不能超过500个字符");
+            throw new BusinessException("Director description cannot exceed 500 characters");
         }
     }
 
     private void validateId(Long id) {
-        validateId(id, "导演ID");
+        validateId(id, "Director ID");
     }
 
     private void validateId(Long id, String fieldName) {
         if (id == null) {
-            throw new BusinessException(fieldName + "不能为空");
+            throw new BusinessException(fieldName + " cannot be empty");
         }
         if (id <= 0) {
-            throw new BusinessException(fieldName + "无效");
+            throw new BusinessException(fieldName + " invalid");
         }
     }
 
     private void validatePageable(Pageable pageable) {
         if (pageable == null) {
-            throw new BusinessException("分页参数不能为空");
+            throw new BusinessException("Page parameters cannot be empty");
         }
         if (pageable.getPageSize() > 100) {
-            throw new BusinessException("每页数据不能超过100条");
+            throw new BusinessException("Page size cannot exceed 100");
         }
     }
 
     private Director getDirectorById(Long id) {
         return directorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("导演不存在，ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Director not found, ID: " + id));
     }
 
     private DirectorVO convertToDirectorVO(Director director) {

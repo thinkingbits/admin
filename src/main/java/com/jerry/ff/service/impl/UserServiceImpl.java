@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在，ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         return convertToUserVO(user);
     }
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在: " + username));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
         
         return convertToUserVO(user);
     }
@@ -59,13 +59,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserVO updateUserInfo(String username, UpdateUserInfoDTO updateUserInfoDTO) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在: " + username));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
         
         // 检查邮箱是否已被其他用户使用
         if (updateUserInfoDTO.getEmail() != null && 
                 !updateUserInfoDTO.getEmail().equals(user.getEmail()) && 
                 userRepository.existsByEmail(updateUserInfoDTO.getEmail())) {
-            throw new BusinessException(400, "邮箱已被注册");
+            throw new BusinessException(400, "Email already registered");
         }
         
         if (updateUserInfoDTO.getEmail() != null) {
@@ -90,11 +90,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updatePassword(String username, UpdatePasswordDTO updatePasswordDTO) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在: " + username));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
         
         // 验证原密码
         if (!passwordEncoder.matches(updatePasswordDTO.getOldPassword(), user.getPassword())) {
-            throw new BusinessException(400, "原密码不正确");
+            throw new BusinessException(400, "Incorrect old password");
         }
         
         // 更新密码
@@ -107,17 +107,73 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserVO updateUserStatus(Long id, Integer status) {
         if (status != 0 && status != 1) {
-            throw new BusinessException(400, "用户状态值无效，应为0(禁用)或1(启用)");
+            throw new BusinessException(400, "Invalid user status, must be 0(disabled) or 1(enabled)");
         }
         
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("用户不存在，ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         user.setStatus(status);
         user.setUpdateAt(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
         
         return convertToUserVO(updatedUser);
+    }
+    
+    @Transactional
+    public UserVO updateUser(Long id, UserVO userVO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(404, "User not found"));
+
+        if (userVO.getEmail() != null && !userVO.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(userVO.getEmail())) {
+                throw new BusinessException(400, "Email already registered");
+            }
+            user.setEmail(userVO.getEmail());
+        }
+
+        if (userVO.getPhone() != null) {
+            user.setPhone(userVO.getPhone());
+        }
+
+        if (userVO.getAvatar() != null) {
+            user.setAvatar(userVO.getAvatar());
+        }
+
+        if (userVO.getStatus() != null) {
+            if (userVO.getStatus() != 0 && userVO.getStatus() != 1) {
+                throw new BusinessException(400, "Invalid user status, must be 0(disabled) or 1(enabled)");
+            }
+            user.setStatus(userVO.getStatus());
+        }
+
+        User savedUser = userRepository.save(user);
+
+        return UserVO.builder()
+                .id(savedUser.getId())
+                .username(savedUser.getUsername())
+                .email(savedUser.getEmail())
+                .phone(savedUser.getPhone())
+                .avatar(savedUser.getAvatar())
+                .status(savedUser.getStatus())
+                .memberLevel(savedUser.getMemberLevel())
+                .roles(savedUser.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                .registerTime(savedUser.getRegisterTime())
+                .lastLoginTime(savedUser.getLastLoginTime())
+                .build();
+    }
+
+    @Transactional
+    public void updatePassword(Long id, String oldPassword, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(404, "User not found"));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new BusinessException(400, "Incorrect old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
     
     private UserVO convertToUserVO(User user) {
